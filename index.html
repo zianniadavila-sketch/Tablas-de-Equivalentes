@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablas de Porciones y Equivalentes SMAE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Ocultar barra de desplazamiento para los botones de categorías */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Transiciones suaves para las filas de la tabla */
+        tbody tr { transition: background-color 0.2s ease; }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 antialiased min-h-screen flex flex-col">
+
+<!-- Chosen Palette: Clean Clinical (bg-slate-50, text-slate-800) with Teal/Emerald accents for health focus (teal-600) -->
+<!-- Application Structure Plan: 
+     1. "Header": Introducción clara y directa al propósito del sitio.
+     2. "Guía Visual (Manos)": Mantiene la explicación visual prioritaria solicitada por el usuario para educar sobre las porciones sin báscula.
+     3. "Tablas Interactivas": Se elimina la gráfica y las tarjetas. En su lugar, se implementa un sistema de pestañas (tabs) que muestra una tabla de datos estructurada y limpia por cada grupo de alimentos. Incluye búsqueda global que filtra dinámicamente las filas de la tabla para facilitar la consulta rápida de los pacientes. -->
+<!-- Visualization & Content Choices: 
+     - Guía Visual -> Meta: Educar/Memorizar -> Método: Cuadrícula CSS con emojis y texto descriptivo -> Justificación: Excelente para asimilar las medidas caseras rápidamente. NO SVG.
+     - Explorador en Tablas -> Meta: Organizar/Buscar información precisa -> Método: Pestañas interactivas y `<table class="tailwind...">` -> Justificación: El usuario solicitó explícitamente formato de tablas en lugar de comparativas (gráficas) para una lectura directa y tradicional pero en un entorno moderno. NO SVG/Mermaid. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow">
+    
+    <!-- Encabezado -->
+    <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-teal-800 tracking-tight mb-4">Guía Práctica de Porciones 🍏🥩</h1>
+        <p class="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            Basado en el Sistema Mexicano de Alimentos Equivalentes (SMAE) 5ta Edición. <br class="hidden md:block">
+            Consulta las tablas oficiales de equivalentes y aprende a calcular tus porciones de forma sencilla.
+        </p>
+    </header>
+
+    <!-- Sección 1: Guía Visual de Manos -->
+    <section id="guia-visual" class="mb-16">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 md:p-10">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-semibold text-slate-800 mb-4 inline-block relative">
+                    ✋🏼 Tu Mano como Taza Medidora
+                    <span class="absolute bottom-0 left-0 w-full h-1 bg-teal-200 rounded-full transform translate-y-2"></span>
+                </h2>
+                <p class="text-slate-600 max-w-2xl mx-auto mt-4 text-lg">
+                    Aprende a estimar tus porciones en cualquier lugar sin necesidad de una báscula. Memoriza estas equivalencias visuales clave.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-teal-300 transition-colors">
+                    <div class="text-5xl mb-4 text-center">✊</div>
+                    <h3 class="font-bold text-slate-800 text-xl text-center mb-1">1 Puño cerrado</h3>
+                    <p class="text-teal-700 font-semibold text-center mb-3">Aprox. 1 taza</p>
+                    <p class="text-sm text-slate-600 text-center">Ideal para medir <strong>verduras</strong>, <strong>frutas picadas</strong> y líquidos como <strong>leche</strong>.</p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-rose-300 transition-colors">
+                    <div class="text-5xl mb-4 text-center">🖐️</div>
+                    <h3 class="font-bold text-slate-800 text-xl text-center mb-1">1 Palma (grosor)</h3>
+                    <p class="text-rose-700 font-semibold text-center mb-3">90g - 100g de carne</p>
+                    <p class="text-sm text-slate-600 text-center">Representa de <strong>3 a 4 equivalentes</strong> de proteína. Es tu porción de comida principal.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-amber-300 transition-colors">
+                    <div class="text-5xl mb-4 text-center">👐</div>
+                    <h3 class="font-bold text-slate-800 text-xl text-center mb-1">1 Mano ahuecada</h3>
+                    <p class="text-amber-700 font-semibold text-center mb-3">Aprox. 1/2 taza</p>
+                    <p class="text-sm text-slate-600 text-center">Perfecta para medir lo que cabe en tu cuenco: <strong>arroz, frijoles, lentejas o pasta</strong>.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-blue-300 transition-colors">
+                    <div class="text-5xl mb-4 text-center">👍</div>
+                    <h3 class="font-bold text-slate-800 text-xl text-center mb-1">1 Pulgar entero</h3>
+                    <p class="text-blue-700 font-semibold text-center mb-3">1 cucharada</p>
+                    <p class="text-sm text-slate-600 text-center">Úsalo para estimar porciones de <strong>aderezos, crema y queso crema</strong>.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-purple-300 transition-colors">
+                    <div class="text-5xl mb-4 text-center">☝️</div>
+                    <h3 class="font-bold text-slate-800 text-xl text-center mb-1">Punta del pulgar</h3>
+                    <p class="text-purple-700 font-semibold text-center mb-3">1 cucharadita</p>
+                    <p class="text-sm text-slate-600 text-center">La medida ideal para controlar cantidades de <strong>aceites y mantequilla</strong>.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-orange-300 transition-colors">
+                    <div class="text-5xl mb-4 text-center">👌</div>
+                    <h3 class="font-bold text-slate-800 text-xl text-center mb-1">1 Puñadito</h3>
+                    <p class="text-orange-700 font-semibold text-center mb-3">Pizca grande / Semillas</p>
+                    <p class="text-sm text-slate-600 text-center">Un puñadito es lo que puedes tomar al juntar la yema de todos tus dedos (una "pizca" grande). Ideal para <strong>semillas (almendras, nueces)</strong>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 2: Tablas de Equivalentes -->
+    <section id="tablas-explorador" class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 mb-10">
+        <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h2 class="text-3xl font-semibold text-slate-800 mb-2">Tablas de Equivalentes</h2>
+                <p class="text-slate-600">Navega por los grupos de alimentos para conocer la porción exacta que corresponde a <strong>1 Equivalente</strong>.</p>
+            </div>
+            
+            <!-- Buscador -->
+            <div class="w-full md:w-80 relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">🔍</span>
+                <input type="text" id="searchInput" placeholder="Buscar alimento..." 
+                       class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-slate-50 transition-colors">
+            </div>
+        </div>
+
+        <!-- Pestañas de Categorías -->
+        <div class="w-full overflow-x-auto hide-scrollbar mb-6 border-b border-slate-200">
+            <div class="flex space-x-6 pb-2 min-w-max" id="categoryTabs">
+                <!-- Pestañas inyectadas por JS -->
+            </div>
+        </div>
+
+        <!-- Banner de Información de la Categoría -->
+        <div id="categoryInfoBanner" class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 flex items-start gap-4">
+            <span class="text-3xl" id="categoryIcon">🥦</span>
+            <div>
+                <h4 class="font-bold text-lg text-slate-800 mb-1" id="categoryTitle">Verduras</h4>
+                <p class="text-sm text-slate-600" id="categoryDesc">Descripción del grupo</p>
+            </div>
+        </div>
+
+        <!-- Contenedor de la Tabla -->
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-700 text-sm uppercase tracking-wider">
+                        <th class="px-6 py-4 font-semibold w-1/3">Alimento</th>
+                        <th class="px-6 py-4 font-semibold">Cantidad Casera</th>
+                        <th class="px-6 py-4 font-semibold text-center">Gramos</th>
+                        <th class="px-6 py-4 font-semibold">Guía Visual (Manos)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="text-slate-700 text-sm">
+                    <!-- Filas inyectadas por JS -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Estado Vacío (Búsqueda) -->
+        <div id="emptyState" class="hidden py-12 text-center text-slate-500 border border-t-0 border-slate-200 rounded-b-xl">
+            <span class="text-4xl block mb-3">🧐</span>
+            No se encontraron alimentos con ese nombre.
+        </div>
+
+    </section>
+
+</div>
+
+<script>
+/**
+ * Datos extraídos fielmente de la Lista de Equivalentes SMAE 5 generada previamente.
+ */
+const smaeData = {
+    verduras: {
+        id: "verduras", icon: "🥦", title: "Verduras",
+        desc: "1 Equivalente = Aprox. 25 kcal. ¡Son ricas en fibra y agua, puedes comerlas en abundancia!",
+        items: [
+            { name: "Acelga (cocida / cruda)", measure: "½ taza / 2 tazas", grams: "72g / 72g", visual: "1 mano ahuecada / 2 puños" },
+            { name: "Apio (picado)", measure: "1 ½ tazas", grams: "135g", visual: "1.5 puños" },
+            { name: "Betabel (rallado/cocido)", measure: "¼ taza", grams: "45g", visual: "Mitad de mano ahuecada" },
+            { name: "Brócoli (cocido)", measure: "½ taza", grams: "92g", visual: "1 mano ahuecada" },
+            { name: "Calabacita (picada)", measure: "1 taza (o 1 pieza)", grams: "115g", visual: "1 puño" },
+            { name: "Cebolla (picada)", measure: "½ taza", grams: "58g", visual: "1 mano ahuecada" },
+            { name: "Champiñón", measure: "1 taza", grams: "70g", visual: "1 puño" },
+            { name: "Chayote (cocido/picado)", measure: "½ taza", grams: "80g", visual: "1 mano ahuecada" },
+            { name: "Col (cruda picada)", measure: "2 tazas", grams: "140g", visual: "2 puños" },
+            { name: "Coliflor (cocida)", measure: "1 taza", grams: "124g", visual: "1 puño" },
+            { name: "Ejotes (cocidos)", measure: "½ taza", grams: "62g", visual: "1 mano ahuecada" },
+            { name: "Espárragos", measure: "1 taza (o 6 pzas)", grams: "130g", visual: "1 puño" },
+            { name: "Espinacas (crudas / cocidas)", measure: "2 tazas / ½ taza", grams: "60g / 95g", visual: "2 puños / 1 mano ahuecada" },
+            { name: "Flor de calabaza", measure: "1 taza", grams: "84g", visual: "1 puño" },
+            { name: "Jícama (picada)", measure: "½ taza", grams: "60g", visual: "1 mano ahuecada" },
+            { name: "Jitomate (picado)", measure: "1 taza (o 1 pza)", grams: "120g", visual: "1 puño" },
+            { name: "Lechuga", measure: "3 tazas", grams: "140g", visual: "3 puños" },
+            { name: "Nopal (cocido / crudo)", measure: "1 taza / 2 tazas", grams: "150g / 130g", visual: "1 puño / 2 puños" },
+            { name: "Pepino (rebanado)", measure: "1 taza", grams: "104g", visual: "1 puño" },
+            { name: "Salsa mexicana / casera", measure: "½ taza", grams: "118g", visual: "1 mano ahuecada" },
+            { name: "Setas (cocidas)", measure: "1 taza", grams: "140g", visual: "1 puño" },
+            { name: "Tomate verde", measure: "1 taza (o 5 pzas)", grams: "125g", visual: "1 puño" },
+            { name: "Verdolaga (cocida)", measure: "1 taza", grams: "115g", visual: "1 puño" },
+            { name: "Zanahoria (picada/rallada)", measure: "½ taza", grams: "64g", visual: "1 mano ahuecada" }
+        ]
+    },
+    frutas: {
+        id: "frutas", icon: "🍓", title: "Frutas",
+        desc: "1 Equivalente = Aprox. 15g de carbohidratos. Aportan vitaminas y energía rápida.",
+        items: [
+            { name: "Arándano (fresco)", measure: "1 taza", grams: "140g", visual: "1 puño" },
+            { name: "Berries", measure: "1 taza", grams: "140g", visual: "1 puño" },
+            { name: "Cereza", measure: "1 taza (o 20 pzas)", grams: "100g", visual: "1 puño" },
+            { name: "Chabacano", measure: "4 piezas", grams: "140g", visual: "Caben en una mano" },
+            { name: "Ciruela", measure: "3 piezas", grams: "198g", visual: "Caben en una mano" },
+            { name: "Durazno", measure: "2 piezas (chicas)", grams: "175g", visual: "1 en cada mano" },
+            { name: "Fresas (rebanadas)", measure: "1 taza (o 17 pzas)", grams: "166g", visual: "1 puño" },
+            { name: "Guanábana (pulpa)", measure: "1 taza (o ⅓ pza)", grams: "165g", visual: "1 puño" },
+            { name: "Guayaba", measure: "3 piezas", grams: "135g", visual: "Caben en una mano" },
+            { name: "Higo", measure: "2 piezas", grams: "100g", visual: "1 en cada mano" },
+            { name: "Kiwi", measure: "1 ½ piezas", grams: "114g", visual: "-" },
+            { name: "Limón", measure: "Libre (o 3 piezas)", grams: "-", visual: "-" },
+            { name: "Mamey (picado)", measure: "½ taza (o ⅓ pza)", grams: "85g", visual: "1 mano ahuecada" },
+            { name: "Mandarina", measure: "2 piezas", grams: "128g", visual: "1 en cada mano" },
+            { name: "Mango (picado)", measure: "1 taza (o ½ pza)", grams: "165g", visual: "1 puño" },
+            { name: "Manzana", measure: "1 pieza", grams: "106g", visual: "Tamaño de un puño" },
+            { name: "Melón (picado)", measure: "1 taza", grams: "160g", visual: "1 puño" },
+            { name: "Naranja", measure: "2 piezas", grams: "130g", visual: "1 en cada mano" },
+            { name: "Papaya (picada)", measure: "1 taza", grams: "140g", visual: "1 puño" },
+            { name: "Pasas (Uva pasa)", measure: "2 cucharadas (10 pzas)", grams: "15g", visual: "1 puñadito" },
+            { name: "Pera", measure: "½ pieza", grams: "83g", visual: "Mitad de un puño" },
+            { name: "Piña (picada)", measure: "1 taza", grams: "165g", visual: "1 puño" },
+            { name: "Plátano", measure: "½ pieza", grams: "45g", visual: "-" },
+            { name: "Plátano dominico", measure: "3 piezas", grams: "90g", visual: "-" },
+            { name: "Sandía (picada)", measure: "1 taza", grams: "152g", visual: "1 puño" },
+            { name: "Tamarindo (pulpa)", measure: "¼ taza", grams: "50g", visual: "Mitad de mano ahuecada" },
+            { name: "Toronja", measure: "1 pieza", grams: "140g", visual: "Tamaño de un puño grande" },
+            { name: "Tuna", measure: "2 piezas", grams: "140g", visual: "1 en cada mano" },
+            { name: "Uva", measure: "1 taza (o 18 pzas)", grams: "90g", visual: "1 puño" }
+        ]
+    },
+    cereales: {
+        id: "cereales", icon: "🌾", title: "Cereales (Granos, pan y tortilla)",
+        desc: "1 Equivalente = Aprox. 15g de carbohidratos. Tu principal fuente de energía.",
+        items: [
+            { name: "Amaranto tostado", measure: "¼ taza", grams: "15g", visual: "Mitad de mano ahuecada" },
+            { name: "Arroz (blanco/integral) cocido", measure: "¼ taza", grams: "45g / 40g", visual: "Mitad de mano ahuecada" },
+            { name: "Avena en hojuelas (cruda)", measure: "⅓ taza", grams: "20g", visual: "Mitad de mano ahuecada" },
+            { name: "Bolillo (sin migajón)", measure: "⅓ pieza", grams: "20g", visual: "Tamaño de tu celular" },
+            { name: "Cereal bajo en azúcar", measure: "½ taza", grams: "25g", visual: "1 mano ahuecada" },
+            { name: "Croutones", measure: "⅓ taza", grams: "15g", visual: "Mitad de mano ahuecada" },
+            { name: "Elote (entero)", measure: "1 ½ piezas", grams: "160g", visual: "-" },
+            { name: "Elote desgranado", measure: "½ taza", grams: "83g", visual: "1 mano ahuecada" },
+            { name: "Galletas bajas en azúcar (ej. Marías)", measure: "5 piezas", grams: "20g", visual: "-" },
+            { name: "Hot cake (tradicional)", measure: "½ pieza", grams: "25g", visual: "Tamaño de un CD pequeño" },
+            { name: "Pan integral (caja)", measure: "1 rebanada", grams: "25g", visual: "Tamaño de la palma abierta" },
+            { name: "Papa cocida", measure: "½ pieza (o ½ taza)", grams: "68g", visual: "1 mano ahuecada" },
+            { name: "Pasta (cocida)", measure: "½ taza", grams: "40g", visual: "1 mano ahuecada" },
+            { name: "Salmas", measure: "1 paquete (3 pzas)", grams: "18g", visual: "-" },
+            { name: "Salvado de trigo", measure: "¼ taza (4 cdas)", grams: "15g", visual: "Mitad de mano ahuecada" },
+            { name: "Tortilla de harina", measure: "½ pieza", grams: "15g", visual: "-" },
+            { name: "Tortilla de maíz", measure: "1 pieza", grams: "30g", visual: "Tamaño de la mano abierta" },
+            { name: "Tostadas horneadas", measure: "2 piezas", grams: "20g", visual: "-" }
+        ]
+    },
+    leguminosas: {
+        id: "leguminosas", icon: "🍲", title: "Leguminosas",
+        desc: "Ricas en proteína vegetal y fibra. Todas las medidas son en cocido.",
+        items: [
+            { name: "Alverjón", measure: "½ taza", grams: "90g", visual: "1 mano ahuecada" },
+            { name: "Chícharo", measure: "½ taza", grams: "80g", visual: "1 mano ahuecada" },
+            { name: "Frijoles (de la olla)", measure: "½ taza", grams: "86g", visual: "1 mano ahuecada" },
+            { name: "Garbanzo", measure: "½ taza", grams: "82g", visual: "1 mano ahuecada" },
+            { name: "Haba", measure: "½ taza", grams: "85g", visual: "1 mano ahuecada" },
+            { name: "Lentejas", measure: "½ taza", grams: "99g", visual: "1 mano ahuecada" },
+            { name: "Soya cocida", measure: "⅓ taza", grams: "30g", visual: "Mitad de mano ahuecada" }
+        ]
+    },
+    animal: {
+        id: "animal", icon: "🥩", title: "Origen Animal",
+        desc: "¡IMPORTANTE! Las cantidades mostradas son por 1 SOLO equivalente. En tu comida principal normalmente consumes 3 o 4 equivalentes (la palma entera).",
+        items: [
+            { name: "CARNES DE RES (Bistec, Filete, Molida, etc)", measure: "Tamaño de ⅓ de la palma", grams: "30g a 35g", visual: "⅓ de palma" },
+            { name: "CARNES DE CERDO (Lomo, Pierna, Maciza)", measure: "Tamaño de ⅓ de la palma", grams: "30g a 40g", visual: "⅓ de palma" },
+            { name: "POLLO (Pierna o muslo)", measure: "¼ de pieza", grams: "40g", visual: "-" },
+            { name: "POLLO (Pechuga aplanada)", measure: "Tamaño de ⅓ de la palma", grams: "30g", visual: "⅓ de palma" },
+            { name: "POLLO (Deshebrado)", measure: "¼ taza (2 cdas copeteadas)", grams: "30g", visual: "-" },
+            { name: "JAMÓN / PECHUGA DE PAVO (Bajo sodio)", measure: "2 rebanadas", grams: "40g", visual: "-" },
+            { name: "PESCADO (Filete o Mojarra)", measure: "Tamaño de ⅓ de la palma", grams: "40g", visual: "⅓ de palma" },
+            { name: "ATÚN (En agua, drenado)", measure: "⅓ lata", grams: "30g", visual: "-" },
+            { name: "SALMÓN", measure: "Tamaño de ⅓ de la palma", grams: "30g", visual: "⅓ de palma" },
+            { name: "CAMARÓN (Cocido/Pacotilla)", measure: "5 piezas medianas", grams: "30g", visual: "-" },
+            { name: "JAIBA (Pulpa)", measure: "¼ taza", grams: "30g", visual: "-" },
+            { name: "CHARALES (Secos)", measure: "¼ taza", grams: "15g", visual: "-" },
+            { name: "HUEVO (Cocido, revuelto, frito)", measure: "1 pieza entera", grams: "50g", visual: "-" },
+            { name: "HUEVO (Claras)", measure: "2 piezas (o ¼ taza)", grams: "66g", visual: "-" },
+            { name: "QUESO PANELA", measure: "1 rebanada gruesa", grams: "40g", visual: "-" },
+            { name: "QUESO OAXACA", measure: "1 hebra gruesa", grams: "30g", visual: "-" },
+            { name: "QUESO COTTAGE", measure: "3 cucharadas", grams: "45g", visual: "-" }
+        ]
+    },
+    lacteos: {
+        id: "lacteos", icon: "🥛", title: "Lácteos",
+        desc: "Aportan calcio y proteína. Las medidas estándar suelen ser en tazas (240ml).",
+        items: [
+            { name: "Leche (Entera, Semi, Descremada, Deslactosada)", measure: "1 taza", grams: "240 ml", visual: "1 puño de líquido" },
+            { name: "Leche de Soya (sin azúcar)", measure: "1 taza", grams: "240 ml", visual: "1 puño de líquido" },
+            { name: "Kéfir", measure: "1 taza", grams: "240 ml", visual: "1 puño de líquido" },
+            { name: "Yogurt natural (sin azúcar)", measure: "1 taza", grams: "240 ml", visual: "1 puño" },
+            { name: "Yogurt griego (sin azúcar)", measure: "½ taza", grams: "100g - 120g", visual: "1 mano ahuecada" }
+        ]
+    },
+    grasas: {
+        id: "grasas", icon: "🥑", title: "Grasas y Aceites",
+        desc: "Aportan sabor y saciedad. Mídelos bien ya que son densos en energía.",
+        items: [
+            { name: "Aceites (Oliva, Aguacate, Canola)", measure: "1 cucharadita", grams: "5 ml", visual: "1 punta de pulgar" },
+            { name: "Aceite en spray", measure: "5 disparos de 1 segundo", grams: "-", visual: "-" },
+            { name: "Aceitunas", measure: "6 piezas", grams: "20g", visual: "-" },
+            { name: "Aderezo (vinagretas / comercial)", measure: "1 cucharada", grams: "15g", visual: "1 pulgar entero" },
+            { name: "Aguacate", measure: "⅓ de pieza (3 rebanadas)", grams: "30g", visual: "-" },
+            { name: "Crema (baja en grasa / espesa)", measure: "1 cucharada", grams: "15g", visual: "1 pulgar entero" },
+            { name: "Margarina / Mantequilla", measure: "1 cucharadita", grams: "5g", visual: "1 punta de pulgar" },
+            { name: "Mayonesa", measure: "1 cucharadita", grams: "5g", visual: "1 punta de pulgar" },
+            { name: "Queso crema (bajo en grasa)", measure: "1 cucharada", grams: "14g", visual: "1 pulgar entero" }
+        ]
+    },
+    semillas: {
+        id: "semillas", icon: "🥜", title: "Grasas con Proteína (Semillas)",
+        desc: "Ideales para snacks, acompañar ensaladas o dar textura crujiente.",
+        items: [
+            { name: "Ajonjolí", measure: "4 cucharaditas", grams: "10g", visual: "-" },
+            { name: "Almendras", measure: "10 piezas", grams: "12g", visual: "1 puñadito pequeño" },
+            { name: "Avellanas", measure: "9 piezas", grams: "12g", visual: "1 puñadito pequeño" },
+            { name: "Cacahuate (sin sal)", measure: "14 piezas", grams: "12g", visual: "1 puñadito pequeño" },
+            { name: "Chía", measure: "1 cda. sopera (7 cditas)", grams: "12g", visual: "1 pulgar entero" },
+            { name: "Nuez", measure: "3 mitades", grams: "10g", visual: "1 puñadito pequeño" },
+            { name: "Nuez de la india (sin sal)", measure: "7 piezas", grams: "12g", visual: "1 puñadito pequeño" },
+            { name: "Pepitas de calabaza", measure: "1 ½ cucharadas", grams: "10g", visual: "1 puñadito pequeño" },
+            { name: "Pistache (sin sal)", measure: "18 piezas", grams: "12g", visual: "1 puñadito pequeño" }
+        ]
+    }
+};
+
+// Estado de la aplicación
+let currentCategory = 'verduras';
+let isSearching = false;
+
+// Elementos del DOM
+const tabsContainer = document.getElementById('categoryTabs');
+const tableBody = document.getElementById('tableBody');
+const searchInput = document.getElementById('searchInput');
+const infoBanner = document.getElementById('categoryInfoBanner');
+const emptyState = document.getElementById('emptyState');
+const tableElement = document.querySelector('table');
+
+// Inicialización
+function init() {
+    buildTabs();
+    updateTableForCategory(currentCategory);
+    
+    // Listener de Búsqueda
+    searchInput.addEventListener('input', handleSearch);
+}
+
+// Construir pestañas interactivas
+function buildTabs() {
+    tabsContainer.innerHTML = '';
+    Object.values(smaeData).forEach(cat => {
+        const btn = document.createElement('button');
+        
+        // Estilos base de la pestaña
+        btn.className = `flex-shrink-0 px-4 py-3 border-b-2 font-medium text-sm transition-colors duration-200 outline-none focus:bg-slate-50`;
+        
+        // Estado Activo vs Inactivo
+        if (cat.id === currentCategory && !isSearching) {
+            btn.classList.add('border-teal-600', 'text-teal-700');
+        } else {
+            btn.classList.add('border-transparent', 'text-slate-500', 'hover:text-slate-700', 'hover:border-slate-300');
+        }
+
+        btn.innerHTML = `<span class="mr-1 text-base">${cat.icon}</span> ${cat.title.split(' ')[0]}`; // Solo primera palabra para la pestaña
+        
+        btn.onclick = () => {
+            isSearching = false;
+            searchInput.value = '';
+            currentCategory = cat.id;
+            buildTabs(); // Refrescar visualmente la pestaña activa
+            updateTableForCategory(currentCategory);
+        };
+        
+        tabsContainer.appendChild(btn);
+    });
+}
+
+// Actualizar el área principal (Tabla e Información) para una categoría específica
+function updateTableForCategory(catId) {
+    const data = smaeData[catId];
+    
+    // Actualizar Banner
+    infoBanner.style.display = 'flex';
+    document.getElementById('categoryIcon').textContent = data.icon;
+    document.getElementById('categoryTitle').textContent = data.title;
+    document.getElementById('categoryDesc').textContent = data.desc;
+
+    // Mostrar tabla, ocultar estado vacío
+    tableElement.style.display = 'table';
+    emptyState.style.display = 'none';
+    
+    renderTableRows(data.items);
+}
+
+// Renderizar las filas de la tabla
+function renderTableRows(items, isSearchResult = false) {
+    tableBody.innerHTML = '';
+    
+    items.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        // Colores alternos (Zebra striping)
+        tr.className = index % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/50 hover:bg-slate-50';
+        tr.classList.add('border-b', 'border-slate-100');
+        
+        let visualHTML = item.visual;
+        if (item.visual !== '-' && item.visual) {
+            visualHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">${item.visual}</span>`;
+        }
+
+        let nameHTML = `<span class="font-semibold text-slate-800">${item.name}</span>`;
+        if (isSearchResult) {
+            nameHTML += `<br><span class="text-xs text-teal-600 uppercase tracking-wide">${item.catTitle}</span>`;
+        }
+
+        tr.innerHTML = `
+            <td class="px-6 py-4 align-middle">${nameHTML}</td>
+            <td class="px-6 py-4 align-middle">${item.measure}</td>
+            <td class="px-6 py-4 align-middle text-center font-medium">${item.grams}</td>
+            <td class="px-6 py-4 align-middle">${visualHTML}</td>
+        `;
+        tableBody.appendChild(tr);
+    });
+}
+
+// Manejar la búsqueda global
+function handleSearch(e) {
+    const query = e.target.value.toLowerCase().trim();
+    
+    if (query === '') {
+        isSearching = false;
+        buildTabs();
+        updateTableForCategory(currentCategory);
+        return;
+    }
+
+    isSearching = true;
+    buildTabs(); // Quita el resaltado activo de las pestañas
+
+    // Ocultar banner durante la búsqueda global
+    infoBanner.style.display = 'none';
+
+    let allItems = [];
+    Object.values(smaeData).forEach(cat => {
+        cat.items.forEach(item => {
+            if (item.name.toLowerCase().includes(query)) {
+                allItems.push({ ...item, catTitle: cat.title });
+            }
+        });
+    });
+
+    if (allItems.length === 0) {
+        tableElement.style.display = 'none';
+        emptyState.style.display = 'block';
+    } else {
+        tableElement.style.display = 'table';
+        emptyState.style.display = 'none';
+        renderTableRows(allItems, true);
+    }
+}
+
+// Arrancar la app
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
